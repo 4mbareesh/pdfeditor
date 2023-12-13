@@ -1,0 +1,135 @@
+import { useState } from 'react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import PDFViewer from '../components/PdfViewer'
+import PDFGenerator from '../components/PdfGenerate'
+import PageSelection from '../components/PdfPageSelection'
+import PDFControls from '../components/PdfControls'
+import PdfUpload from '../components/PdfUpload'
+
+function Upload() {
+  const [pdf, setPdf] = useState(null)
+  const [selectedPages, setSelectedPages] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState()
+  const [fileId, setFileId] = useState()
+
+  //upload file
+  const handleFileChange = async (e) => {
+    const formData = new FormData()
+    formData.append('pdf', e.target.files[0])
+    try {
+      const { data } = await axios.post('/api/upload', formData)
+      setFileId(data.id)
+      setPdf(e.target.files[0])
+      setCurrentPage(1)
+      setSelectedPages([])
+      toast.success('File was uploaded successfully!')
+    } catch (error) {
+      console.error('Error uploading PDF:', error)
+    }
+  }
+
+  //fetch total pages
+  function onDocumentLoadSuccess({ numPages }) {
+    setTotalPages(numPages)
+  }
+
+  //fetch selected pages
+  const handlePageSelect = (pageNumber) => {
+    const index = selectedPages.indexOf(pageNumber)
+    if (index === -1) {
+      setSelectedPages([...selectedPages, pageNumber])
+    } else {
+      const newSelectedPages = [...selectedPages]
+      newSelectedPages.splice(index, 1)
+      setSelectedPages(newSelectedPages)
+    }
+  }
+
+  //previous page selection
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => Math.max(1, prevPage - 1))
+  }
+
+  //next page selection
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(totalPages, prevPage + 1))
+  }
+
+  //generate new pdf
+  const handleGeneratePDF = async () => {
+    try {
+      if (!selectedPages.length) {
+        return toast.error('Please select atleast one page!')
+      }
+
+      if (totalPages <= 1) {
+        return toast.error('Pdf is already single page!')
+      }
+
+      const response = await axios.post(
+        '/api/generate',
+        { selectedPages, fileId },
+        { responseType: 'blob' }
+      )
+
+      const contentDispositionHeader = response.headers['content-disposition']
+      const match = contentDispositionHeader.match(/filename=(.+)-edited.pdf/)
+      const fileName = match ? match[1] + '-edited' : 'pdf-edited'
+
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      toast.success('Your file will be downloaded shortly.')
+      // Create a link element and trigger a download
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = fileName
+      link.click()
+    } catch (error) {
+      console.error('Error generating and downloading PDF:', error)
+    }
+  }
+
+  return (
+    <div
+      className={`bg-gray-100 select-none ${
+        pdf ? '' : 'h-screen flex justify-center items-center'
+      }`}
+    >
+      {pdf ? '' : <PdfUpload onFileChange={handleFileChange} />}
+      <div className='md:flex justify-center'>
+        {pdf && (
+          <>
+            <div className='md:w-9/12 bg-gray-400 md:flex justify-center overflow-x-auto overflow-y-hidden'>
+              <PDFViewer
+                pdf={pdf}
+                currentPage={currentPage}
+                onDocumentLoadSuccess={onDocumentLoadSuccess}
+              />
+            </div>
+            <div className='bg-gray-200 md:w-3/12 flex flex-col justify-around items-center gap-5'>
+              <PageSelection
+                totalPages={totalPages}
+                currentPage={currentPage}
+                selectedPages={selectedPages}
+                setSelectedPages={setSelectedPages}
+                handlePageSelect={handlePageSelect}
+              />
+              <PDFControls
+                totalPages={totalPages}
+                currentPage={currentPage}
+                handlePreviousPage={handlePreviousPage}
+                handleNextPage={handleNextPage}
+              />
+              <PDFGenerator handleGeneratePDF={handleGeneratePDF} selectedPages={selectedPages} />
+              <h1>Upload Another one?</h1>
+              <PdfUpload onFileChange={handleFileChange} />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default Upload
