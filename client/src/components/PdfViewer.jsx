@@ -9,7 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 
 function PDFViewer({ pdf, currentPage, onDocumentLoadSuccess }) {
   const onLoading = () => {
-    console.count('hihi')
+    // console.count('hihi')
     return <Loading />
   }
   return (
