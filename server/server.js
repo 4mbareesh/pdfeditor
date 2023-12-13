@@ -15,9 +15,8 @@ connectDB()
 app.use(express.json())
 app.use(
   cors({
-    // origin: process.env.CLIENT_URL,
-    origin: ('*'),
-    // credentials: true,
+    origin: process.env.CLIENT_URL,
+    credentials: true,
     exposedHeaders: ['Content-Disposition', 'Authorization', 'Content-Type'],
   })
 )
