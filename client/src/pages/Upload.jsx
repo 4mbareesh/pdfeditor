@@ -68,18 +68,18 @@ function Upload() {
         return toast.error('Pdf is already single page!')
       }
 
+      toast.success('Your file will be downloaded shortly.')
       const response = await axios.post(
         '/api/generate',
         { selectedPages, fileId },
         { responseType: 'blob' }
-      )
+        )
 
       const contentDispositionHeader = response.headers['content-disposition']
       const match = contentDispositionHeader.match(/filename=(.+)-edited.pdf/)
       const fileName = match ? match[1] + '-edited' : 'pdf-edited'
 
       const blob = new Blob([response.data], { type: 'application/pdf' })
-      toast.success('Your file will be downloaded shortly.')
       // Create a link element and trigger a download
       const link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
