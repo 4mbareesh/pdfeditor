@@ -19,12 +19,22 @@ function Upload() {
     const formData = new FormData()
     formData.append('pdf', e.target.files[0])
     try {
-      const { data } = await axios.post('/api/upload', formData)
-      setFileId(data.id)
-      setPdf(e.target.files[0])
-      setCurrentPage(1)
-      setSelectedPages([])
-      toast.success('File was uploaded successfully!')
+      const response = axios.post('/api/upload', formData)
+      toast.promise(response, {
+        loading: 'Uploading file...',
+        success: ({ data }) => {
+          console.log(data.id)
+          setFileId(data.id)
+          setPdf(e.target.files[0])
+          setCurrentPage(1)
+          setSelectedPages([])
+          return 'File loaded!'
+        },
+        error: (err) => {
+          console.error('Error uploading PDF:', err)
+          return 'Error uploading PDF'
+        },
+      })
     } catch (error) {
       console.error('Error uploading PDF:', error)
     }
@@ -68,23 +78,38 @@ function Upload() {
         return toast.error('Pdf is already single page!')
       }
 
-      toast.success('Your file will be downloaded shortly.')
+      if (selectedPages.length === totalPages) {
+        return toast.error(`You've selected the entire pages!`)
+      }
+
+      const loadingToastId = toast.loading('Generating PDF...')
       const response = await axios.post(
         '/api/generate',
         { selectedPages, fileId },
         { responseType: 'blob' }
-        )
+      )
 
-      const contentDispositionHeader = response.headers['content-disposition']
-      const match = contentDispositionHeader.match(/filename=(.+)-edited.pdf/)
-      const fileName = match ? match[1] + '-edited' : 'pdf-edited'
+      toast.dismiss(loadingToastId)
+      toast.promise(Promise.resolve(response), {
+        // loading: 'Generating PDF...',
+        success: () => {
+          const contentDispositionHeader = response.headers['content-disposition']
+          const match = contentDispositionHeader.match(/filename=(.+)-edited.pdf/)
+          const fileName = match ? match[1] + '-edited' : 'pdf-edited'
 
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      // Create a link element and trigger a download
-      const link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = fileName
-      link.click()
+          const blob = new Blob([response.data], { type: 'application/pdf' })
+          // Create a link element and trigger a download
+          const link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = fileName
+          link.click()
+          return 'Your file will be start downloading.'
+        },
+        error: (err) => {
+          console.error('Error generating PDF:', err)
+          return 'Error generating PDF'
+        },
+      })
     } catch (error) {
       console.error('Error generating and downloading PDF:', error)
     }

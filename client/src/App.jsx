@@ -14,7 +14,7 @@ function App() {
       <Toaster
         position='top-center'
         toastOptions={{
-          duration: 4000,
+          // duration: 4000,
           style: {
             borderRadius: '10px',
             background: '#2b3440',
