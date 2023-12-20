@@ -4,22 +4,22 @@ import { FaArrowAltCircleLeft } from 'react-icons/fa'
 
 function PDFControls({ currentPage, totalPages, handlePreviousPage, handleNextPage }) {
   return (
-    <div className='flex mb-4 w-full justify-around items-center'>
+    <div className='flex items-center justify-around w-full mb-4'>
       <button
         onClick={handlePreviousPage}
         disabled={currentPage === 1}
-        className='rounded-full p-1 bg-white hover:scale-110 transition duration-200'
+        className='p-1 transition duration-200 bg-white rounded-full hover:scale-110'
         title='Previous Page'
       >
         <FaArrowAltCircleLeft size={40} />
       </button>
-      <h1 className='text-center bg-gray-300 p-1 px-3 rounded-2xl'>
+      <h1 className='p-1 px-3 text-center bg-gray-300 rounded-2xl'>
         Page {currentPage} of {totalPages}
       </h1>
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className='rounded-full p-1 bg-white hover:scale-110 transition duration-200'
+        className='p-1 transition duration-200 bg-white rounded-full hover:scale-110'
         title='Next Page'
       >
         <FaArrowAltCircleRight size={40} />

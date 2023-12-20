@@ -26,7 +26,7 @@ function PageSelection({ currentPage, selectedPages, handlePageSelect, setSelect
           )}
         </button>
         <button
-          className='bg-red-500 p-1 rounded-full transition duration-300 hover:scale-110'
+          className='p-1 transition duration-300 bg-red-500 rounded-full hover:scale-110'
           onClick={() => {
             setSelectedPages([])
           }}

@@ -3,14 +3,14 @@ import { FiUploadCloud } from 'react-icons/fi'
 
 function PdfUpload({ onFileChange }) {
   return (
-    <div className='bg-gray-100 font-sans shadow-xl rounded-xl hover:scale-105 transition duration-500 max-w-fit m-5'>
+    <div className='m-5 font-sans transition duration-500 bg-gray-100 shadow-xl rounded-xl hover:scale-105 max-w-fit'>
       <label
         htmlFor='dropzone-file'
-        className='cursor-pointer flex w-full max-w-lg flex-col items-center rounded-xl border-2 border-dashed border-blue-400 bg-white p-6 text-center'
+        className='flex flex-col items-center w-full max-w-lg p-6 text-center bg-white border-2 border-blue-400 border-dashed cursor-pointer rounded-xl'
       >
         <FiUploadCloud size={'3em'} color='#3b82f6' />
-        <h2 className='mt-4 text-xl font-medium text-gray-700 tracking-wide'>PDF File</h2>
-        <p className='mt-2 text-gray-500 tracking-wide w-11/12'>
+        <h2 className='mt-4 text-xl font-medium tracking-wide text-gray-700'>PDF File</h2>
+        <p className='w-11/12 mt-2 tracking-wide text-gray-500'>
           Drop any PDF file or click to upload one (&lt;25mb)
         </p>
         <input

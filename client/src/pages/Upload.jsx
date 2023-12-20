@@ -122,17 +122,17 @@ function Upload() {
       }`}
     >
       {pdf ? '' : <PdfUpload onFileChange={handleFileChange} />}
-      <div className='md:flex justify-center'>
+      <div className='justify-center md:flex'>
         {pdf && (
           <>
-            <div className='md:w-9/12 bg-gray-400 md:flex justify-center overflow-x-auto overflow-y-hidden'>
+            <div className='justify-center overflow-x-auto overflow-y-hidden bg-gray-400 md:w-9/12 md:flex'>
               <PDFViewer
                 pdf={pdf}
                 currentPage={currentPage}
                 onDocumentLoadSuccess={onDocumentLoadSuccess}
               />
             </div>
-            <div className='bg-gray-200 md:w-3/12 flex flex-col justify-around items-center gap-5'>
+            <div className='flex flex-col items-center justify-around gap-5 bg-gray-200 md:w-3/12'>
               <PageSelection
                 totalPages={totalPages}
                 currentPage={currentPage}

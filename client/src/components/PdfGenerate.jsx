@@ -5,7 +5,7 @@ function PDFGenerator({ handleGeneratePDF, selectedPages }) {
   return (
     <button
       onClick={handleGeneratePDF}
-      className='bg-indigo-500 p-2 rounded-3xl transition-all duration-300 hover:rounded-xl hover:scale-110 '
+      className='p-2 transition-all duration-300 bg-indigo-500 rounded-3xl hover:rounded-xl hover:scale-110 '
       // disabled={selectedPages.length === 0 ? true : false}
       title='Generate PDF'
     >
